@@ -31,13 +31,19 @@ public class EnemyController : MonoBehaviour
 
     private Vector3 direction;
 
+    public int CurrentPoint
+    {
+        get { return currentPoint; }
+        set { currentPoint = value; }
+    }
+
     void Start()
     {
         direction = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
 
         currentPoint = Random.Range(minPoint, maxPoint);
 
-        currentSize = Mathf.Lerp(minSize, maxSize, (float)currentPoint / maxPoint);
+        currentSize = Mathf.Lerp(minSize, maxSize, (float)currentPoint / (float)maxPoint);
 
         transform.localScale = new Vector3(currentSize, currentSize, 1);
     }
@@ -46,7 +52,7 @@ public class EnemyController : MonoBehaviour
     {
         transform.position = transform.position + direction * speed * Time.deltaTime;
 
-        GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, (float)currentPoint / maxPoint);
+        GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, (float)currentPoint / (float)maxPoint);
 
         if (transform.position.x > xBoundary)
         {

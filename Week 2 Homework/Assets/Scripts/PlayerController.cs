@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField]
+    GameController gameController;
+
+    [SerializeField]
+    TextMeshProUGUI textScore;
+
     [SerializeField]
     Color minColor;
     [SerializeField]
@@ -26,6 +34,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     int maxPoint;
 
+    [SerializeField]
+    int pointPerFood;
+    [SerializeField]
+    int minPointKill;
+
     private int currentPoint = 0;
     private float currentSize;
 
@@ -38,6 +51,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        textScore.text = "Score " + currentPoint;
+
         UpdateSize();
 
         GetComponent<Renderer>().material.color = Color.Lerp(minColor, maxColor, (float)currentPoint / maxPoint);
@@ -66,7 +81,9 @@ public class PlayerController : MonoBehaviour
 
     void UpdateSize()
     {
-        currentSize = Mathf.Lerp(minSize, maxSize, (float)currentPoint / maxPoint);
+        currentSize = Mathf.Lerp(minSize, maxSize, (float)currentPoint / (float)maxPoint);
+
+        Debug.Log((float)currentPoint / (float)maxPoint);
 
         transform.localScale = new Vector3(currentSize, currentSize, 1);
     }
@@ -75,13 +92,32 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Food"))
         {
-            currentPoint += 10;
+            currentPoint += pointPerFood;
 
+            gameController.foodSpawnCount--;
             Destroy(other.gameObject);
         }
         if (other.gameObject.CompareTag("Enemy"))
         {
-            //Destroy(other.gameObject);
+            float point = other.gameObject.GetComponent<EnemyController>().CurrentPoint;
+
+            if (Mathf.Min(maxPoint, currentPoint) > point)
+            {
+                if (Mathf.Sqrt(point) < minPointKill)
+                {
+                    currentPoint += minPointKill;
+                }
+                else
+                {
+                    currentPoint += (int)Mathf.Sqrt(point);
+                }
+                gameController.enemySpawnCount--;
+                Destroy(other.gameObject);
+            }
+            else
+            {
+                SceneManager.LoadScene("SampleScene");
+            }
         }
     }
 }

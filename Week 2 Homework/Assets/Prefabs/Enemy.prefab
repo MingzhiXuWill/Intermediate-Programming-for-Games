@@ -99,14 +99,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minColor: {r: 1, g: 1, b: 1, a: 1}
-  maxColor: {r: 1, g: 0, b: 0, a: 1}
-  speed: 10
+  maxColor: {r: 1, g: 0.34509805, b: 0.34509805, a: 1}
+  speed: 12
   xBoundary: 35
   yBoundary: 35
   minSize: 0.25
-  maxSize: 2.5
+  maxSize: 5
   minPoint: 10
-  maxPoint: 50
+  maxPoint: 100
 --- !u!58 &1456501394564938894
 CircleCollider2D:
   m_ObjectHideFlags: 0
