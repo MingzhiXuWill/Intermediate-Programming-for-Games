@@ -29,7 +29,7 @@ public class EnemyBase : MonoBehaviour
         TimerTool();
     }
 
-    protected virtual void Damaged(float damage)
+    public virtual void Damaged(float damage)
     {
         hp = Mathf.Max(0, hp - damage); // So hp will never drop below 0
 
@@ -40,6 +40,7 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void Death()
     {
+        SpawnerManager.instance.RemoveEnemy(this);
         Destroy(gameObject);
     }
 

@@ -18,7 +18,7 @@ public class EnemyLV3 : EnemyBase
         hp = Mathf.Min(hp + Time.deltaTime, hpTotal);
     }
 
-    protected override void Damaged(float damage)
+    public override void Damaged(float damage)
     {
         hp = Mathf.Max(0, hp - damage * 2); // So hp will never drop below 0
 
@@ -36,6 +36,7 @@ public class EnemyLV3 : EnemyBase
             nav.speed *= 2;
         }
         else {
+            SpawnerManager.instance.RemoveEnemy(this);
             Destroy(gameObject);
         }
     }

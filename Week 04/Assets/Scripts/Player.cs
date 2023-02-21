@@ -19,6 +19,10 @@ public class Player : MonoBehaviour
 
     float currentYVelocity;
 
+    [SerializeField]
+    Transform gunPoint;
+
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -50,10 +54,27 @@ public class Player : MonoBehaviour
             // Jump
             currentYVelocity += Mathf.Sqrt(2 * jumpHeight * gravityValue);
         }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            SpawnerManager.instance.SpawnBullets(gunPoint.position, cameraTrans.rotation);
+        }
+
         // Calculate Gravity
         currentYVelocity += gravityValue * Time.deltaTime;
 
         move.y = currentYVelocity;
         characterController.Move(move * speed * Time.deltaTime);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            GameManager.instance.GameOver();
+        }
     }
 }
