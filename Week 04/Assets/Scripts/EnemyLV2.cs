@@ -11,7 +11,7 @@ public class EnemyLV2 : EnemyBase
         hp = Mathf.Min(hp + Time.deltaTime, hpTotal);
     }
 
-    protected override void Damaged(float damage)
+    public override void Damaged(float damage)
     {
         hp = Mathf.Max(0, hp - damage * 2); // So hp will never drop below 0
 

@@ -10,7 +10,7 @@ public class EnemyLV1 : EnemyBase
         nav.SetDestination(target.position);
     }
 
-    protected override void Damaged(float damage)
+    public override void Damaged(float damage)
     {
         hp = Mathf.Max(0, hp - damage * 2); // So hp will never drop below 0
 
