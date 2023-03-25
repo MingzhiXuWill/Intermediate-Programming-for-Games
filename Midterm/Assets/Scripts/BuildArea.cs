@@ -5,6 +5,9 @@ using TMPro;
 
 public class BuildArea : MonoBehaviour
 {
+    public enum AreaState {Empty, Built}
+    AreaState areaState = AreaState.Empty;
+
     [SerializeField]
     GameObject emptyTower;
     
@@ -34,7 +37,7 @@ public class BuildArea : MonoBehaviour
     void Setup() {
         buildTransform = transform.Find("Build Transform").transform;
 
-        if (currentTower == null)
+        if (areaState == AreaState.Empty)
         {
             BuildTower(emptyTower);
         }
@@ -98,6 +101,9 @@ public class BuildArea : MonoBehaviour
             SoundManager.instance.PlaySound(currentTowerBase.buildSound);
 
             BuildTextGroup.SetActive(false);
+            if (tower != emptyTower) {
+                areaState = AreaState.Built;
+            }
         }
     }
 
@@ -115,6 +121,8 @@ public class BuildArea : MonoBehaviour
             Destroy(currentTower.gameObject);
             currentTower = null;
             currentTowerBase = null;
+
+            areaState = AreaState.Empty;
         }
     }
 }
