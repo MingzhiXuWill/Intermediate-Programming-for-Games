@@ -17,7 +17,7 @@ public class NPCController : MonoBehaviour
 
     void Start()
     {
-        chatGPT.SendToChatGPT("{\"player_said\":" + "\"Hello, Feater!\"}");
+        anim = GetComponent<Animator>();
     }
 
     void Update()

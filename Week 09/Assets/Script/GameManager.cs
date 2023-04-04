@@ -25,18 +25,25 @@ public class GameManager : MonoBehaviour
     string npcName = "Coco";
     string playerName = "Player";
 
+    [SerializeField]
+    GameSettings gameSettings;
+    [SerializeField]
+    PersonalityDatabase personalityDatabase;
+
     void Awake()
     {
         if (instance == null)
         {
             instance = this;
         }
+
+        chatGPT._initialPrompt = personalityDatabase.personalities[gameSettings.selectedIndex].initialPrompt;
         chatGPT.Init();
     }
 
     void Start()
     {
-        // chatGPT.SendToChatGPT("{\"player_said\":" + "\"Hello! Who are you?\"}");
+        chatGPT.SendToChatGPT("{\"player_said\":" + "\"Hello! Who are you?\"}");
     }
 
     void Update()
@@ -92,5 +99,11 @@ public class GameManager : MonoBehaviour
             string talkLine = "Don't say that!";
             tX_AIReply.text = "<color=#ff7082>" + npcName + ": </color>" + talkLine;
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        gameSettings.gametimer += Time.time;
+        PlayerPrefs.SetFloat("GameTimer", gameSettings.gametimer);
     }
 }

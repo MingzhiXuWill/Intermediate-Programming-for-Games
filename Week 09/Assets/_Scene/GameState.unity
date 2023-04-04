@@ -650,6 +650,8 @@ MonoBehaviour:
   iF_PlayerTalk: {fileID: 1810017650}
   tX_AIReply: {fileID: 260093322}
   npcController: {fileID: 606722806}
+  gameSettings: {fileID: 11400000, guid: 6314a9d3a97c548658deda339b344a07, type: 2}
+  personalityDatabase: {fileID: 11400000, guid: d496084f6bcf14fd495e8cb85869a70d, type: 2}
 --- !u!1 &386834942
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,7 +1467,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e61546bea7f2a74795ab29cfc5f9657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _apiKey: 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
+  _apiKey: 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
   _model: 0
   _maxTokens: 3072
   _temperature: 0.6
