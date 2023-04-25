@@ -293,6 +293,21 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    public void ConfirmMovement(GridUnit clickedTargetGrid = null)
+    {
+        if (clickedTargetGrid != null)
+        {
+            character.currentLocation = clickedTargetGrid;
+        }
+        else if (currentAvailableMoveTarget != null)
+        {
+            character.currentLocation = currentAvailableMoveTarget;
+        }
+
+        character.transform.position = character.currentLocation.transform.position;
+        StopMovingMode();
+    }
+
     public class AStarNode
     {
         public GridUnit GridUnit;
