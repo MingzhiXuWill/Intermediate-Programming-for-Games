@@ -37,7 +37,7 @@ namespace ChatGPTWrapper {
 
         [HideInInspector]
         //[TextArea(5, 80)]
-        public string _initialPrompt = "You are ChatGPT, a large language model trained by OpenAI.";
+        public string _initialPrompt = "";
 
         public UnityStringEvent chatGPTResponse = new UnityStringEvent();
 

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Item
 {
-    string itemName;
+    public string itemName;
 
-    int itemLevel;
-    int rarity;
+    public int itemLevel;
+    public int rarity;
 
-    int slotNumber;
+    public int slotNumber;
 
     public void ReceiveInfoFromJson(ItemJsonReceiver json)
     {
