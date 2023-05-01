@@ -35,7 +35,11 @@ public class StartMenuManager : MonoBehaviour
     [SerializeField]
     GameObject save_Template;
 
+    Button[] buttons_save;
+    
     PlayerData[] saveLists;
+
+    PlayerDataPort playerDataPort;
 
     void Awake()
     {
@@ -47,6 +51,8 @@ public class StartMenuManager : MonoBehaviour
 
     void Start()
     {
+        PlayerDataPort playerDataPort = transform.parent.Find("PlayerDataPort").GetComponent<PlayerDataPort>();
+
         GotoStartPanel();
 
         LoadSaves();
@@ -74,6 +80,11 @@ public class StartMenuManager : MonoBehaviour
     }
 
     public void StartAdventure()
+    {
+        SceneManager.LoadScene("GameScene");
+    }
+
+    public void LoadAdventure()
     {
         SceneManager.LoadScene("GameScene");
     }
@@ -109,6 +120,7 @@ public class StartMenuManager : MonoBehaviour
         FileInfo[] info = dir.GetFiles("*.txt");
 
         saveLists = new PlayerData[info.Length];
+        buttons_save = new Button[info.Length];
 
         int count = 0;
         foreach (FileInfo f in info)
@@ -119,14 +131,15 @@ public class StartMenuManager : MonoBehaviour
                 saveLists[count] = JsonUtility.FromJson<PlayerData>(saveString);
 
                 print("Load Save: " + saveLists[count].name);
-                CreateSave(saveLists[count]);
+                CreateSave(saveLists[count], count);
             }
         }
     }
 
-    public void CreateSave(PlayerData data)
+    public void CreateSave(PlayerData data, int count)
     {
         GameObject save = Instantiate(save_Template, save_Template.transform.position, Quaternion.identity, save_Template.transform.parent);
+        buttons_save[count] = save.GetComponent<Button>();
 
         save.name = "Save " + data.name;
 
@@ -136,5 +149,32 @@ public class StartMenuManager : MonoBehaviour
         save.transform.Find("Char Name").GetComponent<TextMeshProUGUI>().text = data.name;
         save.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Level " + data.level;
         save.transform.Find("Act Number").GetComponent<TextMeshProUGUI>().text = "Act " + data.act_number.ToString();
+    }
+
+    public void PortSaveData(Button button)
+    {
+        int order = -1;
+
+        for (int count = 0; count < buttons_save.Length; count ++)
+        {
+            if (buttons_save[count] == button)
+            {
+                order = count;
+                break;
+            }
+        }
+
+        playerDataPort.ReceiveData(saveLists[order]);
+    }
+
+    public void PortNewData(string player_name, int player_sprite)
+    {
+        PlayerData data = new PlayerData();
+
+        data.name = player_name;
+        data.level = 1;
+        data.experience = 0;
+        data.act_number = 1;
+        data.player_sprite = player_sprite;
     }
 }

@@ -145,6 +145,8 @@ public class GameManager : MonoBehaviour
 
     Item[] player_Items = new Item[13];
 
+    PlayerDataPort playerDataPort;
+
     void Awake()
     {
         if (instance == null)
@@ -157,6 +159,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        PlayerDataPort playerDataPort = transform.parent.Find("PlayerDataPort").GetComponent<PlayerDataPort>();
+
         // Setup item list
         for (int count = 0; count < player_Items.Length; count ++) 
         {
@@ -479,7 +483,7 @@ public class GameManager : MonoBehaviour
     {
         string Color = ColorUtility.ToHtmlStringRGBA(rarityColor[item.rarity]);
 
-        text_Loot.text = "You Found " + "<color=#" + Color + ">" + item.itemName + " +" + item.itemLevel + "</color>";
+        text_Loot.text = "You found " + "<color=#" + Color + ">" + item.itemName + " +" + item.itemLevel + "</color>";
 
         text_Loot.gameObject.SetActive(true);
 
