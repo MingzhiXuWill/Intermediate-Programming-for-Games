@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64356d9108b8d7c43b6f3fb122552588, type: 3}
+  m_Name: NPCSets
+  m_EditorClassIdentifier: 
+  Sets:
+  - name: Bandit
+    npcs:
+    - {fileID: 21300000, guid: ed92c14964db4c540b264aea508c809b, type: 3}
+  - name: Werewolf
+    npcs:
+    - {fileID: 21300000, guid: 60869d1b68fbe5040b01f7080b0d91a7, type: 3}
+  - name: Wolf
+    npcs:
+    - {fileID: 21300000, guid: 7db4739d4aa67994b9a294e6f3144fa7, type: 3}
+  - name: Wizard
+    npcs:
+    - {fileID: 21300000, guid: d0fa57602e0381d4282b408e1c9bd993, type: 3}
+  - name: Miner
+    npcs:
+    - {fileID: 21300000, guid: fcc05f69741704947a80d91b0b635a90, type: 3}
+  - name: Serpent
+    npcs:
+    - {fileID: 21300000, guid: 108634c91c427f047bed1ba70afc2897, type: 3}
+  - name: Miner
+    npcs:
+    - {fileID: 21300000, guid: fcc05f69741704947a80d91b0b635a90, type: 3}
+  - name: HoodedFigure
+    npcs:
+    - {fileID: 21300000, guid: 1682a090e1088a44e88c6ab71ba94ff5, type: 3}
+  - name: Dryad
+    npcs:
+    - {fileID: 21300000, guid: 1bae23b916b70c54baff7860669dce34, type: 3}
+  - name: IceCrystal
+    npcs:
+    - {fileID: 21300000, guid: b32e1b93d49182a43bf4317ddc8d530f, type: 3}
+  - name: Spider
+    npcs:
+    - {fileID: 21300000, guid: f8c09d4f96a58ba4b9ed41a04dc68253, type: 3}
+  - name: StoneAltar
+    npcs:
+    - {fileID: 21300000, guid: 046d467ccbebdd3468a58c9a270dcd4a, type: 3}
+  - name: StonePillar
+    npcs:
+    - {fileID: 21300000, guid: 0388d86302f3b4043af29b718fca9cd9, type: 3}
+  - name: Mermaid
+    npcs:
+    - {fileID: 21300000, guid: 8bb311cd6da3ad94099d1ac10e9f969d, type: 3}
+  - name: Serpent
+    npcs:
+    - {fileID: 21300000, guid: 108634c91c427f047bed1ba70afc2897, type: 3}

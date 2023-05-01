@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bac711449e5070445974cc16d997d9dd, type: 3}
+  m_Name: BackgroundSets
+  m_EditorClassIdentifier: 
+  Sets:
+  - name: Caverns
+    backgrounds:
+    - {fileID: 21300000, guid: e8f2677167fd448e08c9d0da3362bf5c, type: 3}
+  - name: Forest
+    backgrounds:
+    - {fileID: 21300000, guid: f792d2288c525024f905616f4c8fa4c6, type: 3}
+  - name: SnowyMountains
+    backgrounds:
+    - {fileID: 21300000, guid: fe36124985999354b987245d91723995, type: 3}
+  - name: Swamp
+    backgrounds:
+    - {fileID: 21300000, guid: a3aea355f4baa408ba6ad3a2af903cf2, type: 3}
+  - name: Camp
+    backgrounds:
+    - {fileID: 21300000, guid: 479456ad90a2e50499793655c7637299, type: 3}
+  - name: Kingdom
+    backgrounds:
+    - {fileID: 21300000, guid: 820eb61d3591cdf4dbd721082c7ec98b, type: 3}
+  - name: Desert
+    backgrounds:
+    - {fileID: 21300000, guid: f21479babd0d6ed4e9aca09a5d5bd2f6, type: 3}

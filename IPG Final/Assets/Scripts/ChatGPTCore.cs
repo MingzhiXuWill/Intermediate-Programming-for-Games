@@ -72,13 +72,13 @@ namespace ChatGPTWrapper {
             }
         }
 
-        public void ResetChat(string initialPrompt) {
+        public void ResetChat() {
             switch (_model) {
                 case Model.ChatGPT:
-                    _chat = new Chat(initialPrompt);
+                    _chat = new Chat(_initialPrompt);
                     break;
                 default:
-                    _prompt = new Prompt(_chatbotName, initialPrompt);
+                    _prompt = new Prompt(_chatbotName, _initialPrompt);
                     break;
             }
         }

@@ -4,22 +4,22 @@ using UnityEngine;
 using TMPro;
 using ChatGPTWrapper;
 using UnityEngine.UI;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
     enum PlayerState { Rest, Adventure};
     PlayerState myPlayerState = PlayerState.Rest;
 
-    [Header("Singleton")] //---------------
-
     public static GameManager instance;
 
-    [Header("System")] //---------------
+    [Header("System-----------------")] 
 
-    [HideInInspector]
-    public string[] ItemSlotName = { "Weapon", "Head", "Shoulders", "Shoulders", "Chest", "Wrist", "Hands", "Waist", "Legs", "Feet"};
+    string[] ItemSlotName = { "Weapon", "Head", "Neck", "Shoulders", "Cloak", "Chest", "Wrist", "Hands", "Waist", "Legs", "Feet", "Ring", "Trinket"};
 
-    [SerializeField]
+    string[] RarityName = { "Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary"};
+
+   [SerializeField]
     ChatGPTCore chatGPTCore;
 
     Item currentItem = new Item();
@@ -29,10 +29,41 @@ public class GameManager : MonoBehaviour
     float eventTimerMax;
     float eventTimer = 0;
 
-    [Header("GUI")] //---------------
+    [SerializeField]
+    int eventNumberMax;
+
+    [SerializeField]
+    float experienceMultiplier = 2;
+
+    int currentSlotNumber = -1;
+
+    [SerializeField]
+    BackgroundSets backgroundSets;
+
+    [SerializeField]
+    NPCSets NPCSets;
+
+    [SerializeField]
+    PlayerSets playerSets;
+
+    [SerializeField]
+    int lootCountMax;
+
+    float lootTextCount = 0;
+
+    [SerializeField]
+    float lootTextCountMax;
+
+    [Header("GUI-----------------")]
 
     [SerializeField]
     TextMeshProUGUI[] text_Items;
+
+    [SerializeField]
+    Color32[] rarityColor;
+
+    [SerializeField]
+    TextMeshProUGUI text_PlayerName;
 
     [SerializeField]
     TextMeshProUGUI text_ActName;
@@ -53,27 +84,66 @@ public class GameManager : MonoBehaviour
     Slider slider_ExpBar;
 
     [SerializeField]
-    Color32[] rarityColor;
+    GameObject GUI_Rest;
 
-    [Header("Text")] //---------------
+    [SerializeField]
+    Image image_Player_Sprite;
+
+    [SerializeField]
+    Image image_Player_Shadow;
+
+    [SerializeField]
+    Image image_NPC_Sprite;
+
+    [SerializeField]
+    Image image_NPC_Shadow;
+
+    [SerializeField]
+    Image image_Background;
+
+    [SerializeField]
+    TextMeshProUGUI text_Loot;
+
+    [Header("Prompt-----------------")]
 
     [SerializeField]
     [TextArea(1, 100)]
-    string text_01;
+    string prompt_item;
+
+    [SerializeField]
+    string prompt_item_replace;
+
+    [SerializeField]
+    string prompt_rarity_replace;
 
     [SerializeField]
     [TextArea(1, 100)]
-    string text_02;
+    string prompt_place;
 
-    [Header("Player")] //---------------
+    [SerializeField]
+    string prompt_NPC_list_replace;
 
+    [SerializeField]
+    string prompt_place_list_replace;
+
+    [SerializeField]
+    string prompt_event_number_replace;
+
+    [Header("Player-----------------")]
+
+    string player_Name = "No one";
     int player_Level = 1;
     float player_Experience = 0;
+    float player_Experience_Current = 0;
+
+    int player_sprite = 0;
 
     int actNumber = 1;
     int eventNumber = 0;
 
-    Item[] player_Items;
+    int lootCount = 0;
+
+    Item[] player_Items = new Item[13];
 
     void Awake()
     {
@@ -87,20 +157,49 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Setup item list
+        for (int count = 0; count < player_Items.Length; count ++) 
+        {
+            player_Items[count] = new Item();
+        }
+
+        // Temp setup player
+        SetPlayerSprite(player_sprite);
+
+        // Setup player name
+        SetPlayerName();
+
+        // Start Act
         GenerateAct();
-        GenerateItem();
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown("s"))
+        {
+            SavePlayerData();
+        }
+        if (Input.GetKeyDown("u"))
+        {
+            GenerateItem();
+        }
+
+        // Event Timer
         if (myPlayerState == PlayerState.Adventure)
         {
             if (eventTimer > eventTimerMax)
             {
-                if (eventNumber <= 8)
+                if (eventNumber < eventNumberMax - 1)
                 {
+                    //print(lootCount);
                     eventTimer = 0;
                     eventNumber++;
+                    lootCount++;
+                    if (lootCount >= lootCountMax)
+                    {
+                        lootCount = 0;
+                        GenerateItem();
+                    }
 
                     GainExp();
                     SetEvent();
@@ -122,24 +221,90 @@ public class GameManager : MonoBehaviour
             eventTimer = 0;
         }
         
+        // UI bar
         SetEventBar();
         SetExpBar();
+        LootTextUpdate();
     }
 
     public void GenerateItem()
     {
-        string prompt = "Provide one random name for one ";
-        prompt += ItemSlotName[Random.Range(0, ItemSlotName.Length)];
-        prompt += text_01;
+        currentSlotNumber = Random.Range(0, ItemSlotName.Length - 1);
 
-        chatGPTCore.SendToChatGPT(prompt);
+        Item tempItem = new Item();
+
+        tempItem.slotNumber = currentSlotNumber;
+        tempItem.itemLevel = player_Level;
+
+        int chance = Random.Range(0, 100); // Rarity chance
+
+        if (chance > 95) // Legendary
+        {
+            tempItem.rarity = 5;
+        }
+        else if (chance > 85) // Epic 
+        {
+            tempItem.rarity = 4;
+        }
+        else if (chance > 70) // Rare
+        {
+            tempItem.rarity = 3;
+        }
+        else if(chance > 50) // Uncommon 
+        {
+            tempItem.rarity = 2;
+        }
+        else if(chance > 15) // Common 
+        {
+            tempItem.rarity = 1;
+        }
+        else // Poor 
+        {
+            tempItem.rarity = 0;
+        }
+
+        if (CompareItem(tempItem))
+        {
+            string prompt = prompt_item;
+
+            prompt = prompt.Replace(prompt_item_replace, ItemSlotName[currentSlotNumber]);
+
+            prompt = prompt.Replace(prompt_rarity_replace, RarityName[tempItem.rarity]);
+
+            //print(currentSlotNumber);
+            //print(prompt);
+
+            player_Items[currentSlotNumber].slotNumber = currentSlotNumber;
+            player_Items[currentSlotNumber].itemLevel = player_Level;
+            player_Items[currentSlotNumber].rarity = tempItem.rarity;
+
+            chatGPTCore.SendToChatGPT(prompt);
+        }
+
+        //print(tempItem.slotNumber);
     }
 
     public void GenerateAct()
     {
-        string prompt = text_02;
+        string prompt = prompt_place;
+
+        prompt = prompt.Replace(prompt_NPC_list_replace, NPCSets.createNameList());
+
+        prompt = prompt.Replace(prompt_place_list_replace, backgroundSets.createNameList());
+
+        prompt = prompt.Replace(prompt_event_number_replace, eventNumberMax.ToString());
+
+        print(prompt);
+
+        ResetEvent();
+        ResetAct();
+
+        SetNPCSprite(null);
+
+        SetBackgroundSprite("Camp");
 
         myPlayerState = PlayerState.Rest;
+        GUI_Rest.SetActive(true);
         eventNumber = 0;
 
         chatGPTCore.SendToChatGPT(prompt);
@@ -147,15 +312,18 @@ public class GameManager : MonoBehaviour
 
     public void ReceiveChatGPTReply(string message)
     {
-        print(message);
+        print("Received: " + message);
 
         if (message.Contains("item_name"))
         {
             ItemJsonReceiver itemJSON = JsonUtility.FromJson<ItemJsonReceiver>(message);
             currentItem.ReceiveInfoFromJson(itemJSON);
 
-            text_Items[1].text = itemJSON.item_name;
-            text_Items[1].color = rarityColor[2];
+            player_Items[currentSlotNumber].itemName = itemJSON.item_name;
+
+            SetLootText(player_Items[currentSlotNumber]);
+
+            EquipItem(player_Items[currentSlotNumber]);
         }
         else if (message.Contains("place_name"))
         {
@@ -163,15 +331,40 @@ public class GameManager : MonoBehaviour
             currentAct.ReceiveInfoFromJson(actJSON);
 
             myPlayerState = PlayerState.Adventure;
+            GUI_Rest.SetActive(false);
 
             SetAct();
             SetEvent();
+        }
+
+        chatGPTCore.ResetChat();
+    }
+
+    void EquipItem(Item item)
+    {
+        text_Items[currentSlotNumber].text = item.itemName + " +" + item.itemLevel;
+        text_Items[currentSlotNumber].color = rarityColor[item.rarity];
+    }
+
+    bool CompareItem(Item item)
+    {
+        int oldScore = player_Items[item.slotNumber].itemLevel + player_Items[item.slotNumber].rarity * 2;
+        int newScore = item.itemLevel + item.rarity * 2;
+
+        if (oldScore < newScore)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
     void SetExpBar()
     {
-        slider_ExpBar.value = player_Experience / player_Level / 2;
+        player_Experience_Current = Mathf.Lerp(player_Experience_Current, player_Experience, 0.01f);
+        slider_ExpBar.value = player_Experience_Current / player_Level / experienceMultiplier;
     }
 
     void SetEventBar()
@@ -179,15 +372,88 @@ public class GameManager : MonoBehaviour
         slider_EventBar.value = eventTimer / eventTimerMax;
     }
 
+    void SetPlayerName()
+    {
+        text_PlayerName.text = player_Name;
+    }
+
     void SetEvent()
     {
         text_Event.text = currentAct.events[eventNumber];
+        SetNPCSprite(currentAct.NPCs[eventNumber]);
+    }
+
+    void SetNPCSprite(string NPCName)
+    {
+        Sprite sprite = NPCSets.createSprite(NPCName);
+
+        if (sprite != null)
+        {
+            image_NPC_Shadow.gameObject.SetActive(true);
+            image_NPC_Sprite.gameObject.SetActive(true);
+
+            image_NPC_Shadow.sprite = sprite;
+            image_NPC_Sprite.sprite = sprite;
+        }
+        else
+        {
+            image_NPC_Shadow.gameObject.SetActive(false);
+            image_NPC_Sprite.gameObject.SetActive(false);
+        }
+    }
+
+    void SetPlayerSprite(int playerNumber)
+    {
+        Sprite sprite = playerSets.createSprite(playerNumber);
+
+        if (sprite != null)
+        {
+            image_Player_Shadow.gameObject.SetActive(true);
+            image_Player_Sprite.gameObject.SetActive(true);
+
+            image_Player_Shadow.sprite = sprite;
+            image_Player_Sprite.sprite = sprite;
+        }
+        else
+        {
+            image_Player_Shadow.gameObject.SetActive(false);
+            image_Player_Sprite.gameObject.SetActive(false);
+        }
+    }
+
+    void SetBackgroundSprite(string BackgroundName)
+    {
+        Sprite sprite = backgroundSets.createSprite(BackgroundName);
+
+        if (sprite != null)
+        {
+            image_Background.gameObject.SetActive(true);
+
+            image_Background.sprite = sprite;
+        }
+        else
+        {
+            image_Background.gameObject.SetActive(false);
+        }
     }
 
     void SetAct()
     {
-        text_ActName.text = "Act" + IntToRoman(actNumber) + currentAct.placeName;
+        text_ActName.text = "Act" + IntToRoman(actNumber) + " - " + currentAct.placeName;
         text_Act.text = currentAct.placeDescription;
+
+        SetBackgroundSprite(currentAct.environment);
+    }
+
+    void ResetEvent()
+    {
+        text_Event.text = "";
+    }
+
+    void ResetAct()
+    {
+        text_ActName.text = "";
+        text_Act.text = "";
     }
 
     void SetLevel()
@@ -199,7 +465,7 @@ public class GameManager : MonoBehaviour
     {
         player_Experience++;
 
-        if (player_Experience >= player_Level * 2)
+        if (player_Experience >= player_Level * experienceMultiplier)
         {
             player_Experience = 0;
 
@@ -209,6 +475,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void SetLootText(Item item)
+    {
+        string Color = ColorUtility.ToHtmlStringRGBA(rarityColor[item.rarity]);
+
+        text_Loot.text = "You Found " + "<color=#" + Color + ">" + item.itemName + " +" + item.itemLevel + "</color>";
+
+        text_Loot.gameObject.SetActive(true);
+
+        lootTextCount = lootTextCountMax;
+    }
+
+    void LootTextUpdate()
+    {
+        if (lootTextCount > 0)
+        {
+            lootTextCount -= Time.deltaTime;
+        }
+        else
+        {
+            lootTextCount = 0;
+
+            text_Loot.gameObject.SetActive(false);
+        }
+    }
 
     string IntToRoman(int value)
     {
@@ -227,4 +517,40 @@ public class GameManager : MonoBehaviour
         }
         return result + " ";
     }
+
+    public void SavePlayerData()
+    {
+        PlayerData playerData = new PlayerData
+        {
+            name = player_Name,
+            level = player_Level,
+            experience = (int)player_Experience_Current,
+            act_number = actNumber,
+            player_sprite = player_sprite,
+        };
+
+        for (int count = 0; count < player_Items.Length; count ++)
+        {
+            playerData.items_level[count] = player_Items[count].itemLevel;
+            playerData.items_name[count] = player_Items[count].itemName;
+            playerData.items_rarity[count] = player_Items[count].rarity;
+        }
+
+        string json = JsonUtility.ToJson(playerData);
+        File.WriteAllText(Application.dataPath + "/Saves/" + player_Name + ".txt", json);
+
+        print("Saved: " + player_Name);
+    }
+}
+
+public class PlayerData
+{
+    public string name;
+    public int level;
+    public int[] items_level = new int[13];
+    public int[] items_rarity = new int[13];
+    public string[] items_name = new string[13];
+    public int experience;
+    public int act_number;
+    public int player_sprite;
 }

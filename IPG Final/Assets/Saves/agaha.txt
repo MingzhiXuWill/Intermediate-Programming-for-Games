@@ -1,0 +1,1 @@
+{"name":"No one","level":1,"items_level":[1,0,0,1,0,0,0,0,0,1,1,0,0],"items_rarity":[1,0,0,2,0,0,0,0,0,3,4,0,0],"items_name":["Whispering Blade","","","Stalwart Shoulders","","","","","","Thundering Iron Greaves","Thundering Titan's Foot","",""],"experience":0,"act_number":1,"player_sprite":0}
