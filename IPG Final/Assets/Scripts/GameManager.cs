@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        PlayerDataPort playerDataPort = transform.parent.Find("PlayerDataPort").GetComponent<PlayerDataPort>();
+        playerDataPort = GameObject.FindGameObjectWithTag("PlayerDataPort").GetComponent<PlayerDataPort>();
 
         // Setup item list
         for (int count = 0; count < player_Items.Length; count ++) 
@@ -167,23 +167,29 @@ public class GameManager : MonoBehaviour
             player_Items[count] = new Item();
         }
 
-        // Temp setup player
+        LoadPlayerData();
+
+        // Setup player level
+        SetLevel();
+
+        // Setup player sprite
         SetPlayerSprite(player_sprite);
 
         // Setup player name
         SetPlayerName();
 
-        // Start Act
+        // Start generating act
         GenerateAct();
     }
 
     private void Update()
     {
+        // Cheat
         if (Input.GetKeyDown("s"))
         {
             SavePlayerData();
         }
-        if (Input.GetKeyDown("u"))
+        if (Input.GetKeyDown("i"))
         {
             GenerateItem();
         }
@@ -204,14 +210,13 @@ public class GameManager : MonoBehaviour
                         lootCount = 0;
                         GenerateItem();
                     }
-
                     GainExp();
                     SetEvent();
+                    SavePlayerData();
                 }
                 else
                 {
                     actNumber++;
-
                     GenerateAct();
                 }
             }
@@ -229,6 +234,34 @@ public class GameManager : MonoBehaviour
         SetEventBar();
         SetExpBar();
         LootTextUpdate();
+    }
+
+    public void LoadPlayerData()
+    {
+        player_Name = playerDataPort.name;
+        player_Level = playerDataPort.level;
+        player_Experience = playerDataPort.experience;
+        player_Experience_Current = playerDataPort.experience;
+        actNumber = playerDataPort.act_number;
+        player_sprite = playerDataPort.player_sprite;
+        lootCount = playerDataPort.lootCount;
+
+        for (int count = 0; count < player_Items.Length; count ++)
+        {
+            if (playerDataPort.items_name[count] != "")
+            {
+                player_Items[count].ReceiveInfoFromPort(
+                    playerDataPort.items_name[count],
+                    playerDataPort.items_level[count],
+                    playerDataPort.items_rarity[count],
+                    count
+                );
+
+                print("name" + playerDataPort.items_name[count]);
+
+                EquipItem(player_Items[count]);
+            }
+        }
     }
 
     public void GenerateItem()
@@ -346,8 +379,8 @@ public class GameManager : MonoBehaviour
 
     void EquipItem(Item item)
     {
-        text_Items[currentSlotNumber].text = item.itemName + " +" + item.itemLevel;
-        text_Items[currentSlotNumber].color = rarityColor[item.rarity];
+        text_Items[item.slotNumber].text = item.itemName + " +" + item.itemLevel;
+        text_Items[item.slotNumber].color = rarityColor[item.rarity];
     }
 
     bool CompareItem(Item item)
@@ -504,7 +537,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    string IntToRoman(int value)
+    public string IntToRoman(int value)
     {
         int[] arabic = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
         string[] roman = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
@@ -528,9 +561,10 @@ public class GameManager : MonoBehaviour
         {
             name = player_Name,
             level = player_Level,
-            experience = (int)player_Experience_Current,
+            experience = (int)player_Experience,
             act_number = actNumber,
             player_sprite = player_sprite,
+            lootCount = lootCount,
         };
 
         for (int count = 0; count < player_Items.Length; count ++)
@@ -557,4 +591,5 @@ public class PlayerData
     public int experience;
     public int act_number;
     public int player_sprite;
+    public int lootCount;
 }

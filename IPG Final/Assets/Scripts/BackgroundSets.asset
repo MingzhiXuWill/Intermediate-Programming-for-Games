@@ -34,3 +34,6 @@ MonoBehaviour:
   - name: Desert
     backgrounds:
     - {fileID: 21300000, guid: f21479babd0d6ed4e9aca09a5d5bd2f6, type: 3}
+  - name: Tomb
+    backgrounds:
+    - {fileID: 21300000, guid: 97ae6224d8689d94e9d221f52677d1ec, type: 3}

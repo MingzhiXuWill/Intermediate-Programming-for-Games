@@ -22,6 +22,8 @@ public class PlayerDataPort : MonoBehaviour
     public int act_number;
     [HideInInspector]
     public int player_sprite;
+    [HideInInspector]
+    public int lootCount;
 
     void Awake()
     {
@@ -41,10 +43,6 @@ public class PlayerDataPort : MonoBehaviour
         experience = data.experience;
         act_number = data.act_number;
         player_sprite = data.player_sprite;
-    }
-
-    public void ResetData()
-    {
-
+        lootCount = data.lootCount;
     }
 }

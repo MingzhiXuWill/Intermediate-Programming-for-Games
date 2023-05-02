@@ -58,3 +58,6 @@ MonoBehaviour:
   - name: Serpent
     npcs:
     - {fileID: 21300000, guid: 108634c91c427f047bed1ba70afc2897, type: 3}
+  - name: Elf
+    npcs:
+    - {fileID: 21300000, guid: 83d1aa6deb8b1d94fbabe49e3aafe88c, type: 3}

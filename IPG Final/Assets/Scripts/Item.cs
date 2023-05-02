@@ -15,4 +15,12 @@ public class Item
     {
         itemName = json.item_name;
     }
+
+    public void ReceiveInfoFromPort(string name, int level, int rarity, int slotNumber)
+    {
+        this.itemName = name;
+        this.itemLevel = level;
+        this.rarity = rarity;
+        this.slotNumber = slotNumber;
+    }
 }
